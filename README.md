@@ -1,6 +1,6 @@
 # electron-app
 
-An Electron application with Vue
+Electron + Vue3 + Puppeteer 示例
 
 ## Recommended IDE Setup
 
