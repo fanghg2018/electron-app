@@ -2,9 +2,12 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import puppeteer from 'puppeteer'
+import { runPuppeteerTask, stopAutomation } from './puppeteer-controller'
+
 
 let mainWindow
+
+// 用于存储当前的 Puppeteer 浏览器实例
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -75,22 +78,24 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // Puppeteer 自动化
-ipcMain.handle('start-puppeteer', async (_event, url) => {
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
-
+ipcMain.handle('start-puppeteer', async (event, url) => {
   // 页面 console 日志推送给渲染进程
-  page.on('console', (msg) => {
-    console.log('主进程收到日志：', msg.text());
-    if (mainWindow && mainWindow.webContents) {
-      mainWindow.webContents.send('puppeteer-log', msg.text());
-    }
-  });
+  try {
+    const title = await runPuppeteerTask(url, (logMessage) => {
+      mainWindow.webContents.send('puppeteer-log', logMessage);
+    });
+    return { title };
+  } catch (err) {
+    return { ok: false, error: err.message || String(err) };
+  }
+});
 
-  await page.goto(url);
-  await page.evaluate(() => console.log('已经进入页面！'));
+ipcMain.handle('stop-automation', async () => {
+  try {
+    await stopAutomation();
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.message || String(err) };
+  }
+});
 
-  const title = await page.title();
-  await browser.close();
-  return title;
-})

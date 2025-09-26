@@ -2,6 +2,7 @@
   <div style="padding:20px">
     <h1>Electron + Puppeteer + Vue + Preload</h1>
     <button @click="startAutomation">启动自动化</button>
+    <button @click="stopAutomation">停止自动化</button>
     <h3>页面标题: {{ title }}</h3>
     <div>
       <h3>Puppeteer Logs:</h3>
@@ -20,17 +21,22 @@ export default {
     };
   },
   mounted() {
-    window.electronAPI.onPuppeteerLog((msg) => {
+    window.electronAPI.onLog((msg) => {
       this.logs.push(msg)
     })
   },
-  beforeUnmount() {
-    window.electronAPI.removePuppeteerLog()
-  },
   methods: {
     async startAutomation() {
-      const t = await window.electronAPI.startPuppeteer('https://www.baidu.com');
-      this.title = t;
+      const t = await window.electronAPI.runPuppeteer('https://www.baidu.com');
+      this.title = t.title;
+    },
+    async stopAutomation() {
+      const t = await window.electronAPI.stopAutomation();
+      if (t) {
+        this.logs.push(' 停止成功');
+      } else {
+        this.logs.push('停止失败');
+      }
     },
   },
 };
