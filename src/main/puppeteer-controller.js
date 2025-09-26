@@ -26,8 +26,8 @@ async function runPuppeteerTask(url, logFn = console.log) {
 
 async function stopAutomation() {
   if (browser) {
-    await browser.close();
-    browser = null;
+    await browser.close()
+    browser = null
   }
 }
 

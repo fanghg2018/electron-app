@@ -4,7 +4,6 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { runPuppeteerTask, stopAutomation } from './puppeteer-controller'
 
-
 let mainWindow
 
 // 用于存储当前的 Puppeteer 浏览器实例
@@ -18,8 +17,8 @@ function createWindow() {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      contextIsolation: true,  // 开启隔离
-      nodeIntegration: false,  // 禁止直接 require
+      contextIsolation: true, // 开启隔离
+      nodeIntegration: false // 禁止直接 require
     }
   })
 
@@ -55,10 +54,7 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-
-
   createWindow()
-
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -82,20 +78,19 @@ ipcMain.handle('start-puppeteer', async (event, url) => {
   // 页面 console 日志推送给渲染进程
   try {
     const title = await runPuppeteerTask(url, (logMessage) => {
-      mainWindow.webContents.send('puppeteer-log', logMessage);
-    });
-    return { title };
+      mainWindow.webContents.send('puppeteer-log', logMessage)
+    })
+    return { title }
   } catch (err) {
-    return { ok: false, error: err.message || String(err) };
+    return { ok: false, error: err.message || String(err) }
   }
-});
+})
 
 ipcMain.handle('stop-automation', async () => {
   try {
-    await stopAutomation();
-    return { ok: true };
+    await stopAutomation()
+    return { ok: true }
   } catch (err) {
-    return { ok: false, error: err.message || String(err) };
+    return { ok: false, error: err.message || String(err) }
   }
-});
-
+})

@@ -1,5 +1,5 @@
 <template>
-  <div style="padding:20px">
+  <div style="padding: 20px">
     <h1>Electron + Puppeteer + Vue + Preload</h1>
     <button @click="startAutomation">启动自动化</button>
     <button @click="stopAutomation">停止自动化</button>
@@ -17,8 +17,8 @@ export default {
   data() {
     return {
       title: '',
-      logs: [],
-    };
+      logs: []
+    }
   },
   mounted() {
     window.electronAPI.onLog((msg) => {
@@ -27,17 +27,17 @@ export default {
   },
   methods: {
     async startAutomation() {
-      const t = await window.electronAPI.runPuppeteer('https://www.baidu.com');
-      this.title = t.title;
+      const t = await window.electronAPI.runPuppeteer('https://www.baidu.com')
+      this.title = t.title
     },
     async stopAutomation() {
-      const t = await window.electronAPI.stopAutomation();
+      const t = await window.electronAPI.stopAutomation()
       if (t) {
-        this.logs.push(' 停止成功');
+        this.logs.push(' 停止成功')
       } else {
-        this.logs.push('停止失败');
+        this.logs.push('停止失败')
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
