@@ -12,7 +12,13 @@ asarUnpack:
   - resources/**
 win:
   executableName: electron-app
+  icon: resources/icon.ico
 nsis:
+  oneClick: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  installerIcon: "resources/icon.ico"
+  installerHeaderIcon: "resources/icon.ico"
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
